@@ -1,0 +1,496 @@
+<div align="center">
+
+<img src="https://img.shields.io/badge/NeuroCredit-Alternative%20Credit%20Scoring-7C6AFF?style=for-the-badge&logo=polygon&logoColor=white" alt="NeuroCredit"/>
+
+# NeuroCredit
+### Alternative Credit Scoring · Powered by AI + Blockchain
+
+**Give a credit score to the 500 million people CIBIL ignores.**  
+Machine learning meets Soul Bound Tokens — your score, on-chain, owned by you.
+
+<br/>
+
+[![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110-009688?style=flat-square&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![Solidity](https://img.shields.io/badge/Solidity-0.8.20-363636?style=flat-square&logo=solidity&logoColor=white)](https://soliditylang.org)
+[![Polygon](https://img.shields.io/badge/Polygon-Amoy%20Testnet-8247E5?style=flat-square&logo=polygon&logoColor=white)](https://polygon.technology)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3-F7931E?style=flat-square&logo=scikit-learn&logoColor=white)](https://scikit-learn.org)
+[![License](https://img.shields.io/badge/License-MIT-22D47A?style=flat-square)](LICENSE)
+
+<br/>
+
+**[Live Demo](#-quick-start) · [API Docs](#-api-reference) · [Smart Contract](#-smart-contract) · [How it Works](#-how-it-works)**
+
+<br/>
+
+---
+
+</div>
+
+## The Problem
+
+India's credit system has a brutal catch-22 at its heart:
+
+> *You can't get a loan because you have no credit history.*  
+> *You have no credit history because you've never gotten a loan.*
+
+**CIBIL** — India's primary credit bureau — only scores people who've already used bank products. Credit cards. Home loans. Car EMIs. But what about the people who never needed those, or were never given access?
+
+| Who gets left out | Scale |
+|---|---|
+| Gig workers (Zomato, Swiggy, Ola, Uber) | 15M+ |
+| Freelancers & self-employed | 400M+ |
+| Small business owners & shopkeepers | 63M MSMEs |
+| First-generation urban migrants | 100M+ |
+| Farmers & rural workers | 120M+ |
+
+These people are not irresponsible. They are simply **invisible** to a system not designed for them.
+
+---
+
+## The Solution
+
+**NeuroCredit** is a three-layer alternative credit scoring platform:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                                                         │
+│   User submits 14 financial signals (UPI, bills, etc)  │
+│                         │                               │
+│                         ▼                               │
+│          ┌──────────────────────────┐                   │
+│          │    FastAPI Backend       │                    │
+│          │  (orchestration layer)   │                    │
+│          └────────────┬─────────────┘                   │
+│                       │                                  │
+│           ┌───────────┴───────────┐                     │
+│           │                       │                     │
+│           ▼                       ▼                     │
+│   ┌──────────────┐     ┌──────────────────────┐        │
+│   │  ML Model    │     │  Polygon Blockchain   │        │
+│   │  (GBR/XGB)   │────▶│  NeuroCredit.sol      │        │
+│   │  score 300–900│    │  ERC-5484 SBT         │        │
+│   └──────────────┘     └──────────┬───────────┘        │
+│                                   │                     │
+│                         ┌─────────▼──────────┐         │
+│                         │  Soul Bound Token   │         │
+│                         │  (in user's wallet) │         │
+│                         └─────────┬──────────┘         │
+│                                   │                     │
+│                    Lender calls verifyCredit()          │
+│                    ← score + eligibility only           │
+│                    ← zero personal data exposed         │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Layer 1 · AI Credit Scoring
+A Gradient Boosting ML model processes 14 alternative financial signals and outputs a score from **300 to 900** — the same range as CIBIL, so every lender already knows how to read it.
+
+### Layer 2 · Blockchain Ownership
+The score is minted as a **non-transferable ERC-5484 Soul Bound Token** on Polygon. You own it. Not us. Not a bank. It lives in your wallet forever.
+
+### Layer 3 · Privacy-Preserving Verification
+Lenders call one public function on the smart contract. They get: score, grade, eligibility. **Nothing else.** Your raw data is never on-chain.
+
+---
+
+## How it Works
+
+### The 14 Signals
+
+NeuroCredit scores people on what they actually **do** with money:
+
+```
+Payment History (35% weight)
+├── Utility bills paid on time          [0.0 – 1.0]
+├── Mobile bill paid on time            [0.0 – 1.0]
+└── Rent paid on time                   [0.0 – 1.0]
+
+Transaction Activity (25% weight)
+├── Monthly UPI transaction count       [0 – 500]
+├── Average transaction amount (₹)     [any]
+└── Transaction consistency             [0.0 – 1.0]
+
+Income Stability (20% weight)
+├── Number of income sources            [1 – 10]
+├── Estimated monthly income (₹)       [any]
+├── Income volatility                   [0.0=stable – 1.0=volatile]
+└── Employment type                     [0=gig, 1=self-employed, 2=salaried]
+
+Savings Behaviour (10% weight)
+├── Savings rate                        [0.0 – 0.6]
+└── Has recurring SIP / investment      [0 or 1]
+
+Tenure & Stability (10% weight)
+├── Mobile number tenure (months)       [0 – 240]
+└── Same address duration (months)      [0 – 240]
+```
+
+### Score Grades
+
+| Score | Grade | Risk | Eligible |
+|---|---|---|---|
+| 800 – 900 | ⭐ Excellent | Very Low | ✅ Yes |
+| 720 – 799 | ✅ Good | Low | ✅ Yes |
+| 650 – 719 | 🟡 Fair | Medium | ✅ Yes |
+| 580 – 649 | 🟠 Poor | High | ❌ No |
+| 300 – 579 | 🔴 Very Poor | Very High | ❌ No |
+
+### Model Performance
+
+The Gradient Boosting Regressor (equivalent to XGBoost) was trained on 5,000 synthetic profiles:
+
+```
+Mean Absolute Error (MAE) : 13.2 points
+R² Score                  : 0.84
+Training profiles         : 5,000
+Test split                : 20%
+Score range               : 300 – 900
+```
+
+An MAE of 13.2 on a 600-point range = **2.2% average error**.
+
+---
+
+## Project Structure
+
+```
+neurocredit/
+│
+├── ml/                          # Machine Learning layer
+│   ├── train.py                 # Data generation + model training
+│   ├── score.py                 # Inference engine (used by backend)
+│   ├── training_data.csv        # 5,000 synthetic profiles
+│   └── artifacts/
+│       ├── model.joblib         # Trained GBR model
+│       ├── scaler.joblib        # StandardScaler (fitted)
+│       ├── features.json        # Feature names in order
+│       └── feature_importance.json
+│
+├── contracts/
+│   └── NeuroCredit.sol          # ERC-5484 Soul Bound Token contract
+│
+├── backend/
+│   └── main.py                  # FastAPI server (2 endpoints)
+│
+├── frontend/
+│   └── index.html               # Complete 4-page app (zero dependencies)
+│
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## Quick Start
+
+### Prerequisites
+
+- Python 3.10+
+- Node.js 18+ (for contract deployment only)
+- A Polygon wallet (MetaMask) for the full blockchain flow
+
+### 1 · Clone & Install
+
+```bash
+git clone https://github.com/yourusername/neurocredit.git
+cd neurocredit
+
+pip install -r requirements.txt
+```
+
+### 2 · Train the ML Model
+
+```bash
+python ml/train.py
+```
+
+Expected output:
+```
+Generating 5,000 synthetic training profiles...
+Score range: 539 to 833
+Training GradientBoosting model (300 estimators)...
+MAE: 13.22 | R2: 0.8387
+Model + artifacts saved!
+```
+
+The trained model is saved to `ml/artifacts/`. **Pre-trained artifacts are included in the repo**, so you can skip this step and go straight to the backend.
+
+### 3 · Start the Backend
+
+```bash
+cd backend
+python main.py
+```
+
+```
+INFO:     Uvicorn running on http://0.0.0.0:8000
+INFO:     Application startup complete.
+```
+
+Interactive API docs available at: `http://localhost:8000/docs`
+
+### 4 · Open the Frontend
+
+```bash
+# No build step. Just open directly:
+open frontend/index.html
+
+# Or serve locally:
+python -m http.server 3000
+# then visit http://localhost:3000/frontend/
+```
+
+The frontend has a **full offline fallback** — the scoring engine is mirrored in JavaScript, so every feature works even without the Python backend running.
+
+### 5 · Deploy the Smart Contract (optional)
+
+```bash
+npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox
+
+# Add to hardhat.config.js:
+# networks: { 'polygon-amoy': { url: process.env.RPC_URL, accounts: [process.env.PRIVATE_KEY] } }
+
+npx hardhat compile
+npx hardhat run scripts/deploy.js --network polygon-amoy
+```
+
+Get free MATIC for Polygon Amoy testnet: https://faucet.polygon.technology
+
+---
+
+## API Reference
+
+### `POST /api/score`
+Compute an applicant's credit score from alternative financial data.
+
+**Request body:**
+```json
+{
+  "wallet_address":       "0x1234...abcd",
+  "upi_txn_count":        45,
+  "upi_avg_amount":       2800.00,
+  "upi_consistency":      0.72,
+  "utility_on_time_pct":  0.85,
+  "mobile_on_time_pct":   0.92,
+  "rent_on_time_pct":     0.78,
+  "income_sources":       2,
+  "monthly_income_est":   35000.00,
+  "income_volatility":    0.30,
+  "savings_rate":         0.18,
+  "has_recurring_sip":    1,
+  "mobile_tenure_months": 36,
+  "same_address_months":  24,
+  "employment_type":      1
+}
+```
+
+**Response:**
+```json
+{
+  "wallet":     "0x1234...abcd",
+  "score":      685,
+  "grade":      "Fair",
+  "risk_level": "Medium",
+  "eligible":   true,
+  "color":      "#eab308",
+  "percentile": 64,
+  "breakdown": {
+    "Payment History":      85,
+    "Transaction Activity": 47,
+    "Income Stability":     62,
+    "Savings Behaviour":    51,
+    "Tenure & Stability":   29
+  },
+  "message": "Score computed successfully. Eligible for credit products."
+}
+```
+
+---
+
+### `POST /api/verify`
+Lender endpoint. Returns score and eligibility only — zero personal data.
+
+**Request:**
+```json
+{ "wallet_address": "0x1234...abcd" }
+```
+
+**Response (found):**
+```json
+{
+  "wallet":   "0x1234...abcd",
+  "score":    685,
+  "grade":    "Fair",
+  "eligible": true,
+  "found":    true,
+  "message":  "Credit SBT verified on-chain. Score: 685 (Fair). Eligible for credit."
+}
+```
+
+**Response (not found):**
+```json
+{
+  "wallet":   "0x9999...ffff",
+  "score":    null,
+  "grade":    null,
+  "eligible": null,
+  "found":    false,
+  "message":  "No credit SBT found for this wallet address."
+}
+```
+
+---
+
+### `GET /api/health`
+```json
+{ "status": "ok", "model": "loaded", "chain": "polygon-amoy-testnet" }
+```
+
+---
+
+## Smart Contract
+
+**`NeuroCredit.sol`** — deployed on Polygon Amoy Testnet
+
+### Key Functions
+
+```solidity
+// ISSUER ONLY — mint a new Credit SBT
+function mintCredit(
+    address wallet,
+    uint16  score,       // 300–900
+    bool    eligible,
+    string calldata metadataURI
+) external onlyIssuer
+
+// ISSUER ONLY — update score on existing SBT
+function updateScore(
+    address wallet,
+    uint16  newScore,
+    bool    eligible,
+    string calldata metadataURI
+) external onlyIssuer
+
+// PUBLIC — lender verification (no personal data)
+function verifyCredit(address wallet) external view returns (
+    uint16  score,
+    uint8   grade,       // 0=VeryPoor, 1=Poor, 2=Fair, 3=Good, 4=Excellent
+    bool    eligible,
+    uint32  updatedAt,   // unix timestamp
+    uint256 tokenId
+)
+
+// PUBLIC — check if a wallet has a SBT
+function hasSBT(address wallet) external view returns (bool)
+
+// LOCKED — SBTs cannot be transferred
+function transferFrom(address, address, uint256) external pure {
+    revert("NeuroCredit: SBTs are non-transferable");
+}
+```
+
+### What Makes This SBT Special
+
+| Property | How it's enforced |
+|---|---|
+| Non-transferable | `transferFrom` and `safeTransferFrom` revert at contract level |
+| One per wallet | `require(!_hasSBT[wallet])` on mint |
+| User ownership | Token lives in wallet, issuer cannot recall it |
+| Score updatable | `updateScore()` refreshes without burning |
+| Private by design | Zero personal data stored on-chain |
+
+---
+
+## Frontend Pages
+
+The app is a single `index.html` file — no framework, no build step, instant load.
+
+| Page | Path | Description |
+|---|---|---|
+| Home | `/` | Hero, stats, feature cards |
+| Get Scored | `#apply` | 14-signal submission form with live sliders |
+| Score Result | Modal | Animated gauge, breakdown bars, mint button |
+| Verify | `#verify` | Lender verification portal |
+| How it Works | `#how` | 5-step explainer |
+
+### Offline Fallback
+The JavaScript scoring engine in `index.html` exactly mirrors the Python model logic. If the FastAPI backend is unreachable, scoring still works — making the demo bulletproof for presentations.
+
+---
+
+## Why Not Just Use CIBIL?
+
+| | CIBIL | Finbox / CreditVidya | NeuroCredit |
+|---|---|---|---|
+| Scores gig workers | ❌ | ✅ | ✅ |
+| Alternative data | ❌ | ✅ | ✅ |
+| User owns their score | ❌ | ❌ | ✅ |
+| Score is on-chain | ❌ | ❌ | ✅ |
+| Non-transferable / unfakeable | ❌ | ❌ | ✅ |
+| Works with DeFi protocols | ❌ | ❌ | ✅ |
+| Zero personal data to lenders | ❌ | ❌ | ✅ |
+| Lender trusts blockchain, not company | ❌ | ❌ | ✅ |
+
+---
+
+## Roadmap
+
+```
+v1.0  ✅  ML model + FastAPI + ERC-5484 SBT + React frontend
+v1.1  🔜  ZK-proof layer (Circom + snarkjs) — mathematically private scoring
+v1.2  🔜  Mainnet deployment (Polygon PoS)
+v1.3  🔜  Mobile app (React Native)
+v2.0  🔜  NPCI / Account Aggregator integration (real UPI data)
+v2.1  🔜  B2B API marketplace for fintech lenders
+v3.0  🔜  Southeast Asia + Africa expansion
+```
+
+---
+
+## Built With
+
+| Layer | Technology |
+|---|---|
+| Machine Learning | Python 3.12 · scikit-learn · GradientBoostingRegressor · NumPy · Pandas · joblib |
+| Backend API | FastAPI · Pydantic v2 · Uvicorn |
+| Smart Contract | Solidity 0.8.20 · ERC-5484 · Polygon Amoy Testnet |
+| Frontend | HTML5 · CSS3 · Vanilla JavaScript |
+| Fonts | Syne · DM Sans · DM Mono (Google Fonts) |
+| Dev Tools | Hardhat · VS Code · Git |
+| Deployment | Vercel (frontend) · Polygon Amoy (contract) |
+
+---
+
+## Hackathon
+
+Built for **Frostbyte Hackathon Grand Finale 2026**
+
+**Themes addressed:** AI/ML · Finance & Financial Technology · Blockchain/Web3 · Business Innovation
+
+| Judging Criterion | Weight | How NeuroCredit delivers |
+|---|---|---|
+| Innovation & Creativity | 25% | First SBT-based credit scoring for informal economy. ZK-proof roadmap. |
+| Technical Implementation | 25% | 3 independent technical layers — ML + Solidity + FastAPI — all integrated |
+| Practical Impact | 20% | 500M+ credit-invisible Indians. Directly deployable with NBFC partners. |
+| Design & Usability | 15% | Animated score reveal, responsive dark UI, 3 distinct user journeys |
+| Presentation & Clarity | 15% | Problem → solution → live demo. Every design decision has a reason. |
+
+---
+
+## License
+
+MIT © 2026 NeuroCredit
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software.
+
+---
+
+<div align="center">
+
+**Built to solve a real problem, for real people, who have been waiting far too long.**
+
+*NeuroCredit · Frostbyte 2026*
+
+</div>
